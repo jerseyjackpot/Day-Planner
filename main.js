@@ -38,8 +38,7 @@ $(window).on("load", function () {
     
     // build row components
     var $rowDiv = $('<div>');
-    $rowDiv.addClass('row');
-    $rowDiv.addClass('plannerRow');
+    $rowDiv.addClass('.row');
     $rowDiv.attr('hour-index',hour);
   
     // Start building Time box portion of row
@@ -48,6 +47,7 @@ $(window).on("load", function () {
   
     // create timeBox element (contains time)
     var $timeBox = $('<span>');
+    $timeBox.addClass(".hourSpan");
     // can use this to get value
     $timeBox.attr('class','timeBox');
     
@@ -95,7 +95,7 @@ $(window).on("load", function () {
     $saveDiv.addClass('col-md-1');
 
     var $saveBtn = $('<button>');
-    $saveBtn.addClass("saveBtn")
+    $saveBtn.addClass(".saveBtn")
     $saveBtn.attr('save-id',storedAppointments);
     $saveBtn.attr('class',"far fa-save saveIcon");
     
