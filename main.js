@@ -1,101 +1,146 @@
-// WHEN I open the planner
-// THEN the current day is displayed at the top of the calendar
-var timeDisplay = moment().format("MMMM Do YYYY");
+var appointText = "";
+var appointTime = "";
+var currentDate;
+var currentTime;
+var currentContainer;
+var tempArray = [];
+var storedAppointments;
+var returnedAppointments;
+var planDiv = $('#planContainer');
+var hour;
 
-var timeDiv = $("#currentDay");
-timeDiv.append(timeDisplay);
-var hourBlock = $("#container");
-var newDiv = $("<div>");
-var newRow = $("#row");
-var rowInput = $("#input");
-var saveButton = $("<button>");
-var test = false;
+$(window).on("load", function () {
+  currentDate = moment().format("dddd MMM Do YYYY, h:mm a");
+  $("#currentDay").append(currentDate);
+  currentTime = moment().format("H");
 
-newDiv.append(hourBlock);
-newRow.append(newDiv);
-newDiv.addClass(newRow);
-newRow.addClass(rowInput);
-rowInput.addClass("form-control form-control-lg");
-
-// renderCells - onLoad functions? or when the page is ready, we need to "render" any saved cells
-function renderAppointments() {
-  storedAppointments = JSON.parse(localStorage.getItem("appointments"));
-  if (storedAppointments !== null) {
-    for (i = 0; i < storedAppointments.length; i++) {
-      returnedAppointments = storedAppointments[i];
-      details = returnedAppointments.details;
-      timeIndex = returnedAppointments.time;
-      timeIndex = timeIndex.replace(":00", "");
-      if (details !== null) {
-        $("#container")
-          .children("<div>")
-          .children("#row")
-          .children("#input")
-          .val(details);
+  function renderAppointments() {
+      storedAppointments = JSON.parse(localStorage.getItem("appointments"));
+      if (storedAppointments !== null) {
+          for (i = 0; i < storedAppointments.length; i++) {
+              returnedAppointments = storedAppointments[i];
+              details = returnedAppointments.details;
+              timeIndex = returnedAppointments.time;
+              timeIndex = timeIndex.replace(":00", '');
+              if (details !== null) {
+                  $("#" + timeIndex).children('div').children('div').children('textarea').val(details);
+              }
+          }
       }
-    }
   }
+
+  renderAppointments();
+  
+  // build calendar by row for fix set of hours
+  for(var hour = 9; hour <= 17; hour++) {
+    // index for array use offset from hour
+    var index = hour - 9;
+    
+    // build row components
+    var $rowDiv = $('<div>');
+    $rowDiv.addClass('row');
+    $rowDiv.addClass('plannerRow');
+    $rowDiv.attr('hour-index',hour);
+  
+    // Start building Time box portion of row
+    var $colTimeDiv = $('<div>');
+    $colTimeDiv.addClass('col-md-2');
+  
+    // create timeBox element (contains time)
+    var $timeBox = $('<span>');
+    // can use this to get value
+    $timeBox.attr('class','timeBox');
+    
+    // format hours for display
+    var displayHour = 0;
+    var ampm = "";
+    if (hour > 12) { 
+      displayHour = hour - 12;
+      ampm = "pm";
+    } else {
+      displayHour = hour;
+      ampm = "am";
+    }
+    
+    // populate timeBox with time
+    $timeBox.text(`${displayHour} ${ampm}`);
+
+    // insert into col inset into timebox
+    $rowDiv.append($colTimeDiv);
+    $colTimeDiv.append($timeBox)
+    // STOP building Time box portion of row
+
+    // START building input portion of row
+    // build row components
+    var $dailyPlanSpn = $('<input>');
+
+    $dailyPlanSpn.attr('type','text');
+    $dailyPlanSpn.attr('class','dailyPlan');
+
+    // access index from data array for hour 
+    $dailyPlanSpn.val( tempArray[index] );
+    
+    // create col to control width
+    var $inputDiv = $('<div>');
+    $inputDiv.addClass('col-md-9');
+    $inputDiv.addClass("textarea");
+
+    // add col width and row component to row
+    $rowDiv.append($inputDiv);
+    $inputDiv.append($dailyPlanSpn);
+    // STOP building Time box portion of row
+
+    // START building save portion of row
+    var $saveDiv = $('<div>');
+    $saveDiv.addClass('col-md-1');
+
+    var $saveBtn = $('<button>');
+    $saveBtn.addClass("saveBtn")
+    $saveBtn.attr('save-id',storedAppointments);
+    $saveBtn.attr('class',"far fa-save saveIcon");
+    
+    
+    // add col width and row component to row
+    $rowDiv.append($saveDiv);
+    $saveDiv.append($saveBtn);
+    // STOP building save portion of row
+    
+    // add row to planner container
+    planDiv.append($rowDiv);
+    }
+  })
+
+  for (i = 9; i <= 17; i++) {
+    CurrentContainer = i;
+  if (currentTime === i) {
+    $('#' + currentContainer).addClass("present");
+    $('#' + currentContainer).children('div').children('div').children("textarea").addClass("present");
+    }
+  else if (hour > i) {
+    $('#' + currentContainer).addClass("past");
+    $('#' + currentContainer).children('div').children('div').children("textarea").addClass("past");
+    }
+  else {
+    $('#' + currentContainer).addClass("future");
+    $('#' + currentContainer).children('div').children('div').children("textarea").addClass("future");
+    }
+
 }
+$(".saveBtn").click(function () {
+  appointText = $(this).parent('div').children('div').children('textarea').val();
+  appointTime = $(this).parent('div').parent().attr("id");
+  appointment = {
+      time: appointTime,
+      details: appointText
+  }
+  tempArray = JSON.parse(localStorage.getItem("appointments"));
+  if (tempArray === null) {
+      localStorage.setItem('appointments', JSON.stringify([{ time: appointTime, details: appointText }]));
+  }
+  else {
+      tempArray.push(appointment);
+      localStorage.setItem("appointments", JSON.stringify(tempArray));
 
-renderAppointments();
-
-// WHEN I scroll down
-// build calendar by row
-// THEN I am presented with timeblocks for standard business hours
-// add divs for hour blocks
-
-// newDiv.addAttr('hour-index');
-// class="btn btn-primary"></button>
-function hourBlock() {
-  for (var i = 1; i < 9; i++);
-  hourBlock.length[i];
-  console.log("condition hit!");
-}
-// WHEN I view the timeblocks for that day
-// THEN each timeblock is color coded to indicate whether it is in the past, present, or future
-// red for past, yellow for present, green for future
-
-// set row color based on time
-// updateRowColor(newDiv, hour);
-
-// // function to update row color
-// function updateRowColor(hourBlock, hour) {
-//   if (test) {
-//     console.log("newDivColor ", nowHour24, hour);
-//   }
-
-//   if (hour < nowHour24) {
-//     // $hourRow.css('')
-//     if (test) {
-//       console.log("lessThan");
-//     }
-//     newRow.css("background-color", "tomato");
-//   } else if (hour > nowHour24) {
-//     if (test) {
-//       console.log("greaterthan");
-//     }
-//     newRow.css("background-color", "lightgreen");
-//   } else {
-//     if (test) {
-//       console.log("eqaul");
-//     }
-//     newRow.css("background-color", "yellow");
-//   }
-// }
-
-// WHEN I click into a timeblock
-// click event
-// THEN I can enter an event
-// some kind of input
-
-// WHEN I click the save button for that timeblock
-// THEN the text for that event is saved in local storage
-// create buttons for saving data into the inputs
-
-// WHEN I refresh the page
-// THEN the saved events persist
-// JSON parse the data on the client server
-
-// saveHandler - we need a function to handle click and save
-
-// renderColorCode - use moment.js (or alternatives in webapi) to get the current time "color code" (class and background-color)
+  }
+  $(this).parent('div').children('div').children('textarea').replaceWith($('<textarea>' + appointText.addClass("textarea") + '</textarea>'));
+})
