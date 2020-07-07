@@ -7,7 +7,7 @@ The page uses the [Moment.js](https://momentjs.com/) library to work with date a
 ## Snapshot and Link
 
 ```
-![Screen Shot 2020-07-06 at 10 59 15 PM](https://user-images.githubusercontent.com/64985702/86697495-6f587580-bfdc-11ea-8606-e9806ce4a362.png)
+![Screen Shot 2020-07-06 at 10 59 15 PM](https://user-images.githubusercontent.com/64985702/86698501-5b614380-bfdd-11ea-9ee0-1f72cfafc195.png)
 
 ```   
 Link to my planner: https://jerseyjackpot.github.io/Day-Planner/
