@@ -1,12 +1,16 @@
+
 // WHEN I open the planner
 // THEN the current day is displayed at the top of the calendar
 $(window).on("load", function () {
+  function runInterval (){
   var currentDate;
   var currentTime;
 
   currentDate = moment().format("dddd MMM Do YYYY, h:mm a");
-  $("#currentDay").append(currentDate);
+
+  $("#currentDay").empty().append(currentDate);
   currentTime = parseInt(moment().format("H"));
+  
   // WHEN I view the timeblocks for that day
   // THEN each timeblock is color coded to indicate whether it is in the past, present, or future
   var displaySavedAppt = function () {
@@ -40,5 +44,8 @@ $(window).on("load", function () {
     var time = $(this).parent().attr("id");
     console.log(time);
     localStorage.setItem(time, text);
-  });
+    });
+  };  
+  runInterval();
+  setInterval(runInterval, 60000);
 });
